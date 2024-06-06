@@ -1,25 +1,22 @@
 package api
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/vedantwankhade/tsrgen/confluence-service/internal/application/core/domain"
-	"github.com/vedantwankhade/tsrgen/confluence-service/pkg/util"
+	"github.com/vedantwankhade/tsrgen/util"
 )
 
 type application struct{}
 
 func (a *application) GetPageFromID(pageId int, confluenceInstance, username, token string) (*domain.Page, error) {
-	creds := fmt.Sprintf("%s:%s", username, token)
-	bearerToken := base64.StdEncoding.EncodeToString([]byte(creds))
 	url := fmt.Sprintf("https://%s/wiki/api/v2/pages/%d", confluenceInstance, pageId)
 
 	headers := make(map[string]string)
 	headers["Accept"] = "application/json"
-	headers["Authorization"] = "Basic " + bearerToken
+	headers["Authorization"] = "Basic " + util.GetBearerToken(username, token)
 
 	params := make(map[string]string)
 	params["body-format"] = "storage"
