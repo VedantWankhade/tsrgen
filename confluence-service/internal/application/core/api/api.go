@@ -1,4 +1,4 @@
-package core
+package api
 
 import (
 	"encoding/base64"
@@ -10,7 +10,9 @@ import (
 	"github.com/vedantwankhade/tsrgen/confluence-service/pkg/util"
 )
 
-func GetPageFromID(pageId int, confluenceInstance, username, token string) (*domain.Page, error) {
+type application struct{}
+
+func (a *application) GetPageFromID(pageId int, confluenceInstance, username, token string) (*domain.Page, error) {
 	creds := fmt.Sprintf("%s:%s", username, token)
 	bearerToken := base64.StdEncoding.EncodeToString([]byte(creds))
 	url := fmt.Sprintf("https://%s/wiki/api/v2/pages/%d", confluenceInstance, pageId)
@@ -34,4 +36,8 @@ func GetPageFromID(pageId int, confluenceInstance, username, token string) (*dom
 		return nil, fmt.Errorf("error decoding the response from get page %d request %w", pageId, err)
 	}
 	return &page, nil
+}
+
+func NewApplication() *application {
+	return &application{}
 }
