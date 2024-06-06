@@ -17,7 +17,7 @@ func MakeHTTPRequest(method, url string, headers map[string]string, body io.Read
 		}
 		url += paramsString.String()
 	}
-	log.Printf("Making request: %s %s\n%#v\n%#v\n", method, url, headers, body)
+	log.Printf("Making request: %s %s\n", method, url)
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, fmt.Errorf("creating request object failed: %w", err)
