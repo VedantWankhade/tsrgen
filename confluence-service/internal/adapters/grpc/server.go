@@ -21,7 +21,22 @@ type server struct {
 	service.UnimplementedConfluenceServer
 }
 
+func (s *server) CreatePage(ctx context.Context, req *service.PageCreateReq) (*service.PageRes, error) {
+	// TODO)) input validation
+	page, err := s.api.CreatePage(req.GetHtmlContent(), req.GetTitle(), req.GetParentPageId(), req.GetSpaceId(), req.GetConfluenceInstance(), req.GetConfleunceUsername(), req.GetConfluenceToken())
+	if err != nil {
+		return nil, fmt.Errorf("page creation request failed: %w", err)
+	}
+	pageRes := &service.PageRes{
+		Id:    page.ID,
+		Html:  page.Body.HTML["value"],
+		Title: page.Title,
+	}
+	return pageRes, nil
+}
+
 func (s *server) GetPage(ctx context.Context, req *service.PageReq) (*service.PageRes, error) {
+	// TODO)) better input validation
 	if req.GetId() == 0 || req.GetConfluenceToken() == "" || req.GetConfleunceUsername() == "" || req.GetConfluenceToken() == "" {
 		return nil, status.Errorf(codes.NotFound, "Invalid page id %d", req.GetId())
 	}

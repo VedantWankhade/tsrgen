@@ -4,4 +4,5 @@ import "github.com/vedantwankhade/tsrgen/confluence-service/internal/application
 
 type APIPort interface {
 	GetPageFromID(int, string, string, string) (*domain.Page, error)
+	CreatePage(string, string, string, string, string, string, string) (*domain.Page, error)
 }

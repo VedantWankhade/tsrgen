@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Confluence_GetPage_FullMethodName = "/Confluence/GetPage"
+	Confluence_GetPage_FullMethodName    = "/Confluence/GetPage"
+	Confluence_CreatePage_FullMethodName = "/Confluence/CreatePage"
 )
 
 // ConfluenceClient is the client API for Confluence service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConfluenceClient interface {
 	GetPage(ctx context.Context, in *PageReq, opts ...grpc.CallOption) (*PageRes, error)
+	CreatePage(ctx context.Context, in *PageCreateReq, opts ...grpc.CallOption) (*PageRes, error)
 }
 
 type confluenceClient struct {
@@ -46,11 +48,21 @@ func (c *confluenceClient) GetPage(ctx context.Context, in *PageReq, opts ...grp
 	return out, nil
 }
 
+func (c *confluenceClient) CreatePage(ctx context.Context, in *PageCreateReq, opts ...grpc.CallOption) (*PageRes, error) {
+	out := new(PageRes)
+	err := c.cc.Invoke(ctx, Confluence_CreatePage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConfluenceServer is the server API for Confluence service.
 // All implementations must embed UnimplementedConfluenceServer
 // for forward compatibility
 type ConfluenceServer interface {
 	GetPage(context.Context, *PageReq) (*PageRes, error)
+	CreatePage(context.Context, *PageCreateReq) (*PageRes, error)
 	mustEmbedUnimplementedConfluenceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedConfluenceServer struct {
 
 func (UnimplementedConfluenceServer) GetPage(context.Context, *PageReq) (*PageRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPage not implemented")
+}
+func (UnimplementedConfluenceServer) CreatePage(context.Context, *PageCreateReq) (*PageRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePage not implemented")
 }
 func (UnimplementedConfluenceServer) mustEmbedUnimplementedConfluenceServer() {}
 
@@ -92,6 +107,24 @@ func _Confluence_GetPage_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Confluence_CreatePage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PageCreateReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConfluenceServer).CreatePage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Confluence_CreatePage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConfluenceServer).CreatePage(ctx, req.(*PageCreateReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Confluence_ServiceDesc is the grpc.ServiceDesc for Confluence service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var Confluence_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPage",
 			Handler:    _Confluence_GetPage_Handler,
+		},
+		{
+			MethodName: "CreatePage",
+			Handler:    _Confluence_CreatePage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

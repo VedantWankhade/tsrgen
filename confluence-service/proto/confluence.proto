@@ -9,6 +9,16 @@ message PageReq {
     string confluenceToken = 4;
 }
 
+message PageCreateReq {
+    string htmlContent = 1;
+    string title = 2;
+    string spaceId = 3;
+    string parentPageId = 4;
+    string confluenceInstance = 5;
+    string confleunceUsername = 6;
+    string confluenceToken = 7;
+}
+
 message PageRes {
     string id = 1;
     string title = 2;
@@ -17,4 +27,5 @@ message PageRes {
 
 service Confluence {
     rpc GetPage(PageReq) returns (PageRes) {}
+    rpc CreatePage(PageCreateReq) returns (PageRes) {}
 }
