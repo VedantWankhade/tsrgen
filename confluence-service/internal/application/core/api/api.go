@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	gearhttp "github.com/vedantwankhade/gopher-gear/net/http"
 	"github.com/vedantwankhade/tsrgen/confluence-service/internal/application/core/domain"
-	"github.com/vedantwankhade/tsrgen/util"
 )
 
 type application struct{}
@@ -16,12 +16,12 @@ func (a *application) GetPageFromID(pageId int, confluenceInstance, username, to
 
 	headers := make(map[string]string)
 	headers["Accept"] = "application/json"
-	headers["Authorization"] = "Basic " + util.GetBearerToken(username, token)
+	headers["Authorization"] = "Basic " + gearhttp.GetBearerToken(username, token)
 
 	params := make(map[string]string)
 	params["body-format"] = "storage"
 
-	body, err := util.MakeHTTPRequest(http.MethodGet, url, headers, nil, params)
+	body, err := gearhttp.MakeRequest(http.MethodGet, url, headers, nil, params)
 	if err != nil {
 		return nil, fmt.Errorf("request to get page %d failed %w", pageId, err)
 	}

@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/vedantwankhade/gopher-gear v0.0.0-20240606202108-2345589d21ae // indirect
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
