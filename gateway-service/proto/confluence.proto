@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option go_package = "github.com/vedantwankhade/tsrgen/gateway-service/services/confluence";
+
+message PageReq {
+    int64 id = 1;
+    string confluenceInstance = 2;
+    string confleunceUsername = 3;
+    string confluenceToken = 4;
+}
+
+message PageCreateReq {
+    string htmlContent = 1;
+    string title = 2;
+    string spaceId = 3;
+    string parentPageId = 4;
+    string confluenceInstance = 5;
+    string confleunceUsername = 6;
+    string confluenceToken = 7;
+}
+
+message PageRes {
+    string id = 1;
+    string title = 2;
+    string html = 3;
+}
+
+service Confluence {
+    rpc GetPage(PageReq) returns (PageRes) {}
+    rpc CreatePage(PageCreateReq) returns (PageRes) {}
+}
