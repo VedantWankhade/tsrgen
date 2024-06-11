@@ -5,13 +5,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/vedantwankhade/tsrgen/gateway-service/config"
 	"github.com/vedantwankhade/tsrgen/gateway-service/internal/application/core/domain"
 )
 
-func (s *server) getPage(w http.ResponseWriter, r *http.Request) {
+func corsMiddleware(next http.Handler) http.Handler {
 	// TODO)) cors for prod
-	if config.GetAppRunMode() == "dev" {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
@@ -20,7 +19,11 @@ func (s *server) getPage(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
-	}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (s *server) getPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, fmt.Sprintf("Method %s not supported (allowed: POST)", r.Method), http.StatusMethodNotAllowed)
 		return
