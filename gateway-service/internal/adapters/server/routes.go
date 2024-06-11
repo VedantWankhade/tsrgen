@@ -40,9 +40,10 @@ func (s *server) getPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("get page request failed: %v", err), http.StatusInternalServerError)
 		return
 	}
-	b, _ := json.Marshal(&page)
-	w.Write(b)
-	// w.Write([]byte("page got: " + page.ID + " " + page.Title))
+	err = json.NewEncoder(w).Encode(page)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding json: err: %v", err), http.StatusInternalServerError)
+	}
 }
 
 func (s *server) createPage(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +63,10 @@ func (s *server) createPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("get page request failed: %v", err), http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "page created: %#v", page)
+	err = json.NewEncoder(w).Encode(page)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding json: err: %v", err), http.StatusInternalServerError)
+	}
 }
 
 func (s *server) routes() *http.ServeMux {
