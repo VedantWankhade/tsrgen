@@ -5,10 +5,22 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/vedantwankhade/tsrgen/gateway-service/config"
 	"github.com/vedantwankhade/tsrgen/gateway-service/internal/application/core/domain"
 )
 
 func (s *server) getPage(w http.ResponseWriter, r *http.Request) {
+	// TODO)) cors for prod
+	if config.GetAppRunMode() == "dev" {
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+	}
 	if r.Method != http.MethodPost {
 		http.Error(w, fmt.Sprintf("Method %s not supported (allowed: POST)", r.Method), http.StatusMethodNotAllowed)
 		return
@@ -25,7 +37,9 @@ func (s *server) getPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("get page request failed: %v", err), http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte("page got: " + page.ID + " " + page.Title))
+	b, _ := json.Marshal(&page)
+	w.Write(b)
+	// w.Write([]byte("page got: " + page.ID + " " + page.Title))
 }
 
 func (s *server) createPage(w http.ResponseWriter, r *http.Request) {
