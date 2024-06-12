@@ -1,0 +1,62 @@
+package api
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"strings"
+
+	gearhttp "github.com/vedantwankhade/gopher-gear/net/http"
+	"github.com/vedantwankhade/tsrgen/jira-service/internal/application/core/domain"
+)
+
+type application struct{}
+
+func NewApplication() *application {
+	return &application{}
+}
+
+type jsonRes struct {
+	Issues []*domain.Issue `json:"issues"`
+	Total  int             `json:"total"`
+}
+
+func (a *application) GetIssuesWithJQL(jql, jiraInstance, jiraUsername, jiraToken string) ([]*domain.Issue, error) {
+	log.Println("getting issues with", jql)
+
+	url := fmt.Sprintf("https://%s/rest/api/3/search", jiraInstance)
+	headers := make(map[string]string)
+	headers["Accept"] = "application/json"
+	headers["Authorization"] = "Basic " + gearhttp.GetBearerToken(jiraUsername, jiraToken)
+	headers["Content-Type"] = "application/json"
+
+	body := fmt.Sprintf(`{
+        "expand": [
+            "names",
+            "schema",
+            "operations"
+          ],
+          "fields": [
+            "summary",
+            "status",
+            "assignee"
+          ],
+          "fieldsByKeys": false,
+          "jql": "%s",
+          "maxResults": 15,
+          "startAt": 0
+        }
+        `, jql)
+	resBody, err := gearhttp.MakeRequest(http.MethodPost, url, headers, strings.NewReader(body), nil)
+	if err != nil {
+		return nil, fmt.Errorf("error getting issues: %w", err)
+	}
+	defer resBody.Close()
+	var issuesRes jsonRes
+	err = json.NewDecoder(resBody).Decode(&issuesRes)
+	if err != nil {
+		return nil, fmt.Errorf("error decoding response body: %w", err)
+	}
+	return issuesRes.Issues, nil
+}
