@@ -12,7 +12,8 @@ import (
 func main() {
 	confluenceClient := clients.NewConfluenceClient(clients.NewGRPCClient().GetConnection("dns:confluence-service:80"))
 	jiraClient := clients.NewJiraClient(clients.NewGRPCClient().GetConnection("dns:jira-service:80"))
-	app := api.NewApplication(confluenceClient, jiraClient)
+	statsClient := clients.NewStatsClient(clients.NewGRPCClient().GetConnection("dns:stats-service:80"))
+	app := api.NewApplication(confluenceClient, jiraClient, statsClient)
 	server := server.NewServer(app)
 	port, _ := strconv.Atoi(config.GetServerPort())
 	server.Run(port)

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "jira.proto";
+
+option go_package = "github.com/vedantwankhade/tsrgen/gateway-service/services/stats";
+
+message StatsReq {
+    repeated Issue issues = 1;
+}
+
+message StatsRes {
+    string html = 1;
+}
+
+service Stats {
+    rpc GetHTML(StatsReq) returns (StatsRes) {}
+}

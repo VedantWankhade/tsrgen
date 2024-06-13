@@ -23,6 +23,29 @@ func corsMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func (s *server) getHTML(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, fmt.Sprintf("Method %s not supported (allowed: POST)", r.Method), http.StatusMethodNotAllowed)
+		return
+	}
+	defer r.Body.Close()
+	var statsReq domain.StatReq
+	err := json.NewDecoder(r.Body).Decode(&statsReq)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("could not parse the request: %v", err), http.StatusBadRequest)
+		return
+	}
+	htmlRes, err := s.app.GetHTML(statsReq.Issues)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("get issues request failed: %v", err), http.StatusInternalServerError)
+		return
+	}
+	err = json.NewEncoder(w).Encode(htmlRes)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding json: err: %v", err), http.StatusInternalServerError)
+	}
+}
+
 func (s *server) getIssues(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, fmt.Sprintf("Method %s not supported (allowed: POST)", r.Method), http.StatusMethodNotAllowed)
@@ -97,5 +120,6 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc("/page", s.getPage)
 	mux.HandleFunc("/page/create", s.createPage)
 	mux.HandleFunc("/issues", s.getIssues)
+	mux.HandleFunc("/html", s.getHTML)
 	return mux
 }

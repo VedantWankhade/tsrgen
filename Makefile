@@ -8,7 +8,7 @@ up:
 	docker compose up -d
 	@echo "Docker images started!"
 
-up_build: build_gateway build_confluence build_jira
+up_build: build_gateway build_confluence build_jira build_stats
 	@echo "Stopping docker images (if running...)"
 	docker compose down
 	@echo "Building (when required) and starting docker images..."

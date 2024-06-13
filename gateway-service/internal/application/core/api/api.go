@@ -8,6 +8,11 @@ import (
 type application struct {
 	confluenceClient ports.ConfluenceClientPort
 	jiraClient       ports.JiraClientPort
+	statsClient      ports.StatsClientPort
+}
+
+func (a *application) GetHTML(issues []*domain.Issue) (string, error) {
+	return a.statsClient.GetHTML(issues)
 }
 
 func (a *application) CreatePage(content, title, parentId, spaceId, confluenceInstance, username, token string) (*domain.Page, error) {
@@ -22,6 +27,6 @@ func (a *application) GetIssues(jql, confluenceInstance, username, token string)
 	return a.jiraClient.GetIssues(jql, confluenceInstance, username, token)
 }
 
-func NewApplication(confluenceClient ports.ConfluenceClientPort, jiraClient ports.JiraClientPort) *application {
-	return &application{confluenceClient: confluenceClient, jiraClient: jiraClient}
+func NewApplication(confluenceClient ports.ConfluenceClientPort, jiraClient ports.JiraClientPort, statsClient ports.StatsClientPort) *application {
+	return &application{confluenceClient: confluenceClient, jiraClient: jiraClient, statsClient: statsClient}
 }
