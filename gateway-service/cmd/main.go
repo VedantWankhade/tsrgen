@@ -7,9 +7,9 @@ import (
 )
 
 func main() {
-	conn := clients.NewGRPCClient().GetConnection(1234)
-	confluenceClient := clients.NewConfluenceClient(conn)
-	app := api.NewApplication(confluenceClient)
+	confluenceClient := clients.NewConfluenceClient(clients.NewGRPCClient().GetConnection(1234))
+	jiraClient := clients.NewJiraClient(clients.NewGRPCClient().GetConnection(1235))
+	app := api.NewApplication(confluenceClient, jiraClient)
 	server := server.NewServer(app)
 	server.Run(8080)
 }

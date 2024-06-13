@@ -10,6 +10,10 @@ type ConfluenceClientPort interface {
 	CreatePage(string, string, string, string, string, string, string) (*domain.Page, error)
 }
 
+type JiraClientPort interface {
+	GetIssues(string, string, string, string) ([]*domain.Issue, error)
+}
+
 type GRPCClientPort interface {
 	GetConnection(int) *grpc.ClientConn
 }

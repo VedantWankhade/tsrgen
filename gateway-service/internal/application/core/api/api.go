@@ -7,6 +7,7 @@ import (
 
 type application struct {
 	confluenceClient ports.ConfluenceClientPort
+	jiraClient       ports.JiraClientPort
 }
 
 func (a *application) CreatePage(content, title, parentId, spaceId, confluenceInstance, username, token string) (*domain.Page, error) {
@@ -17,6 +18,10 @@ func (a *application) GetPage(pageId int, confluenceInstance, username, token st
 	return a.confluenceClient.GetPage(pageId, confluenceInstance, username, token)
 }
 
-func NewApplication(confluenceClient ports.ConfluenceClientPort) *application {
-	return &application{confluenceClient: confluenceClient}
+func (a *application) GetIssues(jql, confluenceInstance, username, token string) ([]*domain.Issue, error) {
+	return a.jiraClient.GetIssues(jql, confluenceInstance, username, token)
+}
+
+func NewApplication(confluenceClient ports.ConfluenceClientPort, jiraClient ports.JiraClientPort) *application {
+	return &application{confluenceClient: confluenceClient, jiraClient: jiraClient}
 }
