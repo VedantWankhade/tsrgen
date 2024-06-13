@@ -1,7 +1,6 @@
 package clients
 
 import (
-	"fmt"
 	"log"
 
 	"google.golang.org/grpc"
@@ -13,12 +12,12 @@ func NewGRPCClient() *grpcClient {
 	return &grpcClient{}
 }
 
-func (c *grpcClient) GetConnection(port int) *grpc.ClientConn {
+func (c *grpcClient) GetConnection(serviceLocation string) *grpc.ClientConn {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
-	conn, err := grpc.NewClient(fmt.Sprintf(":%d", port), opts...)
+	conn, err := grpc.NewClient(serviceLocation, opts...)
 	if err != nil {
-		log.Fatalf("error starting grpc connection on %d: err: %v", port, err)
+		log.Fatalf("error starting grpc connection on %s: err: %v", serviceLocation, err)
 	}
 	return conn
 }

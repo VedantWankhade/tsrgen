@@ -7,6 +7,6 @@ import (
 
 func main() {
 	app := api.NewApplication()
-	server := grpc.NewServer(app, 1234)
+	server := grpc.NewServer(app, 80)
 	server.Run()
 }

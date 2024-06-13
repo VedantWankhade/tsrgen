@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  gateway-service:
+    build:
+      context: ./gateway-service
+    ports:
+      - "8080:80"
+    environment:
+      PORT: 80 
+      MODE: "prod"
+
+  confluence-service:
+    build:
+      context: ./confluence-service
+    environment:
+      MODE: "prod"
+
+  jira-service:
+    build:
+      context: ./jira-service
+    environment:
+      MODE: "prod"

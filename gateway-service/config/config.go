@@ -19,6 +19,10 @@ func GetAppRunMode() string {
 	return getEnv("MODE")
 }
 
+func GetServerPort() string {
+	return getEnv("PORT")
+}
+
 func init() {
 	godotenv.Load()
 }
