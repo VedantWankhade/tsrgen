@@ -1,6 +1,7 @@
 GATEWAY_BINARY=gateway
 CONFLUENCE_BINARY=confluence
 JIRA_BINARY=jira
+STATS_BINARY=stats
 
 up:
 	@echo "Starting Docker images..."
@@ -22,6 +23,11 @@ down:
 build_gateway:
 	@echo "Building gateway binary..."
 	cd ./gateway-service && env GOOS=linux CGO_ENABLED=0 go build -o ./bin/${GATEWAY_BINARY} ./cmd
+	@echo "Done!"
+
+build_stats:
+	@echo "Building stats binary..."
+	cd ./stats-service && env GOOS=linux CGO_ENABLED=0 go build -o ./bin/${STATS_BINARY} ./cmd
 	@echo "Done!"
 
 build_jira:

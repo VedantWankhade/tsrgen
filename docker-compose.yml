@@ -21,3 +21,9 @@ services:
       context: ./jira-service
     environment:
       MODE: "prod"
+
+  stats-service:
+    build:
+      context: ./stats-service
+    environment:
+      MODE: "prod"
