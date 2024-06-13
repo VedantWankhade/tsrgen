@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "github.com/vedantwankhade/tsrgen/jira-service/service";
+
+message IssueReq {
+    string jql = 1;
+    string jiraInstance = 2;
+    string jiraUsername = 3;
+    string jiraToken = 4;
+}
+
+message IssuesRes {
+    repeated Issue issues = 1;
+    int64 total = 2;
+}
+
+message Issue {
+    string id = 1;
+    string key = 2;
+    string testType = 3;
+}
+
+service Jira {
+    rpc GetIssues(IssueReq) returns (IssuesRes) {}
+}

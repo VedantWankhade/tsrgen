@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -18,13 +17,12 @@ func NewApplication() *application {
 }
 
 type jsonRes struct {
-	Issues []*domain.Issue `json:"issues"`
-	Total  int             `json:"total"`
+	Issues     []*domain.Issue `json:"issues"`
+	Total      int             `json:"total"`
+	MaxResults int             `json:"maxResults"`
 }
 
 func (a *application) GetIssuesWithJQL(jql, jiraInstance, jiraUsername, jiraToken string) ([]*domain.Issue, error) {
-	log.Println("getting issues with", jql)
-
 	url := fmt.Sprintf("https://%s/rest/api/3/search", jiraInstance)
 	headers := make(map[string]string)
 	headers["Accept"] = "application/json"
@@ -33,21 +31,18 @@ func (a *application) GetIssuesWithJQL(jql, jiraInstance, jiraUsername, jiraToke
 
 	body := fmt.Sprintf(`{
         "expand": [
-            "names",
-            "schema",
-            "operations"
+            "names"
           ],
           "fields": [
-            "summary",
             "status",
-            "assignee"
+            "customfield_10034"
           ],
           "fieldsByKeys": false,
           "jql": "%s",
           "maxResults": 15,
           "startAt": 0
-        }
-        `, jql)
+    }`, jql)
+
 	resBody, err := gearhttp.MakeRequest(http.MethodPost, url, headers, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, fmt.Errorf("error getting issues: %w", err)
@@ -59,4 +54,24 @@ func (a *application) GetIssuesWithJQL(jql, jiraInstance, jiraUsername, jiraToke
 		return nil, fmt.Errorf("error decoding response body: %w", err)
 	}
 	return issuesRes.Issues, nil
+}
+
+func (a *application) GetIssuesTested(issues []*domain.Issue) []*domain.Issue {
+	var issuesFiltered []*domain.Issue
+	for _, issue := range issues {
+		if issue.Fields.TestType != "" {
+			issuesFiltered = append(issuesFiltered, issue)
+		}
+	}
+	return issuesFiltered
+}
+
+func (a *application) GetIssuesNotTested(issues []*domain.Issue) []*domain.Issue {
+	var issuesFiltered []*domain.Issue
+	for _, issue := range issues {
+		if issue.Fields.TestType == "" {
+			issuesFiltered = append(issuesFiltered, issue)
+		}
+	}
+	return issuesFiltered
 }
