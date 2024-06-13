@@ -40,6 +40,27 @@ func (s *server) GetIssues(ctx context.Context, req *service.IssueReq) (*service
 	return issuesRes, nil
 }
 
+/* func (s *server) GetIssues(ctx context.Context, req *service.IssueReq) (*service.IssuesRes, error) {
+	// TODO)) input validation
+	domainIssues, err := s.api.getIssuesWithJQL(req.GetJql(), req.GetJiraInstance(), req.GetJiraUsername(), req.GetJiraToken())
+	if err != nil {
+		return nil, fmt.Errorf("error getting issues: %w", err)
+	}
+	var issues []*service.Issue
+	for _, issue := range domainIssues {
+		issues = append(issues, &service.Issue{
+			Id:       issue.Id,
+			Key:      issue.Key,
+			TestType: issue.Fields.TestType,
+		})
+	}
+	issuesRes := &service.IssuesRes{
+		Total:  int64(len(domainIssues)),
+		Issues: issues,
+	}
+	return issuesRes, nil
+} */
+
 func NewServer(api ports.APIPort, port int) *server {
 	return &server{
 		api:  api,

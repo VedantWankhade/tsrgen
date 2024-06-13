@@ -55,23 +55,3 @@ func (a *application) GetIssuesWithJQL(jql, jiraInstance, jiraUsername, jiraToke
 	}
 	return issuesRes.Issues, nil
 }
-
-func (a *application) GetIssuesTested(issues []*domain.Issue) []*domain.Issue {
-	var issuesFiltered []*domain.Issue
-	for _, issue := range issues {
-		if issue.Fields.TestType != "" {
-			issuesFiltered = append(issuesFiltered, issue)
-		}
-	}
-	return issuesFiltered
-}
-
-func (a *application) GetIssuesNotTested(issues []*domain.Issue) []*domain.Issue {
-	var issuesFiltered []*domain.Issue
-	for _, issue := range issues {
-		if issue.Fields.TestType == "" {
-			issuesFiltered = append(issuesFiltered, issue)
-		}
-	}
-	return issuesFiltered
-}
