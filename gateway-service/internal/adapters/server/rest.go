@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/vedantwankhade/tsrgen/gateway-service/config"
 	"github.com/vedantwankhade/tsrgen/gateway-service/internal/ports"
 )
 
@@ -21,9 +20,7 @@ func NewServer(app ports.APIPort) *server {
 
 func (s *server) Run(port int) {
 	var mux http.Handler = s.routes()
-	if config.GetAppRunMode() == "dev" {
-		mux = corsMiddleware(mux)
-	}
+	mux = corsMiddleware(mux)
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: mux,

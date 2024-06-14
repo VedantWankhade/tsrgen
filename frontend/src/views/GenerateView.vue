@@ -32,10 +32,25 @@
           <input type="text" name="jql" id="jql" v-model="jql" />
         </div>
         <div>
+          <label for="title">Page Title</label>
+          <input type="text" name="title" id="title" v-model="title" />
+        </div>
+        <div>
+          <label for="parentId">Parent Page ID</label>
+          <input type="text" name="parentId" id="parentId" v-model="parentId" />
+        </div>
+        <div>
+          <label for="spaceId">Space ID</label>
+          <input type="text" name="spaceId" id="spaceId" v-model="spaceId" />
+        </div>
+        <div>
           <button type="submit">Generate</button>
         </div>
       </form>
     </div>
+  </section>
+  <section>
+    <a v-if="pageLink != ''" :href="pageLink">{{ pageLink }}</a>
   </section>
 </template>
 
@@ -46,12 +61,49 @@ export default {
       atlassianInstance: '',
       atlassianUsername: '',
       atlassianToken: '',
-      jql: ''
+      jql: '',
+      title: '',
+      parentId: '',
+      spaceId: '',
+      pageLink: ''
     }
   },
   methods: {
     submit() {
-      console.log(this.atlassianInstance, this.atlassianUsername, this.atlassianToken, this.jql)
+      console.log(
+        this.atlassianInstance,
+        this.atlassianUsername,
+        this.atlassianToken,
+        this.jql,
+        this.title,
+        this.spaceId,
+        this.parentId
+      )
+      fetch('http://localhost:8080/generate', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          atlassianToken: this.atlassianToken,
+          atlassianUsername: this.atlassianUsername,
+          atlassianInstance: this.atlassianInstance,
+          jql: this.jql,
+          title: this.title,
+          spaceId: this.spaceId,
+          parentId: this.parentId
+        })
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json()
+          } else {
+            throw new Error('err')
+          }
+        })
+        .then((data) => (this.pageLink = data))
+        .catch((err) => console.log(err))
     }
   }
 }
