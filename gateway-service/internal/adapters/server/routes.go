@@ -115,11 +115,35 @@ func (s *server) createPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *server) generate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, fmt.Sprintf("Method %s not supported (allowed: POST)", r.Method), http.StatusMethodNotAllowed)
+		return
+	}
+	defer r.Body.Close()
+	var generateReq domain.GenerateReq
+	err := json.NewDecoder(r.Body).Decode(&generateReq)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("could not parse the request: %v", err), http.StatusBadRequest)
+		return
+	}
+	pageUrl, err := s.app.Generate(generateReq.AtlassianInstance, generateReq.AtlassianUsername, generateReq.AtlassianToken, generateReq.JQL, generateReq.Title, generateReq.ParentId, generateReq.SpaceId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("generate page request failed: %v", err), http.StatusInternalServerError)
+		return
+	}
+	err = json.NewEncoder(w).Encode(pageUrl)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding json: err: %v", err), http.StatusInternalServerError)
+	}
+}
+
 func (s *server) routes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/page", s.getPage)
 	mux.HandleFunc("/page/create", s.createPage)
 	mux.HandleFunc("/issues", s.getIssues)
 	mux.HandleFunc("/html", s.getHTML)
+	mux.HandleFunc("/generate", s.generate)
 	return mux
 }
