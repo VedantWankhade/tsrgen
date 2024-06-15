@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/vedantwankhade/tsrgen/gateway-service/internal/application/core/domain"
 	"github.com/vedantwankhade/tsrgen/gateway-service/internal/ports"
@@ -47,7 +48,17 @@ func (a *application) Generate(atlassianInstance, atlassianUsername, atlassianTo
 	if err != nil {
 		return "", fmt.Errorf("error generating page: %w", err)
 	}
-	return fmt.Sprintf("https://%s/wiki/pages/viewinfo.action?pageId=%s", atlassianInstance, page.ID), nil
+	pageLink := fmt.Sprintf("https://%s/wiki/pages/viewinfo.action?pageId=%s", atlassianInstance, page.ID)
+	saveReq := domain.DBPageSaveReq{
+		Id:    page.ID,
+		Title: page.Title,
+		Link:  pageLink,
+	}
+	_, err = a.SaveEntry(saveReq)
+	if err != nil {
+		log.Printf("error saving entry to db: %v\n", err)
+	}
+	return pageLink, nil
 }
 
 func NewApplication(confluenceClient ports.ConfluenceClientPort, jiraClient ports.JiraClientPort, statsClient ports.StatsClientPort, dbClient ports.DBClientPort) *application {
