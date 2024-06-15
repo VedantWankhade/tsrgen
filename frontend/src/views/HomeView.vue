@@ -2,7 +2,7 @@
   <the-title title="Home Page"></the-title>
   <section>
     <div>
-      <ul class="flex justify-between">
+      <ul class="flex justify-between flex-wrap">
         <li
           class="shadow-lg rounded-lg p-4 bg-ctp-mantle m-4"
           :key="pageEntry.id"
@@ -26,24 +26,33 @@ export default {
   },
   data() {
     return {
-      pageEntries: [
-        {
-          id: '1234',
-          title: 'test',
-          link: 'http://vedaant.dev'
-        },
-        {
-          id: '24847',
-          title: 'Hello World',
-          link: 'http://vedantwnkhade.atlassian.dev'
-        },
-        {
-          id: '1wry04i4',
-          title: 'Google',
-          link: 'http://googl.ecom'
-        }
-      ]
+      pageEntries: []
     }
+  },
+  mounted() {
+    fetch('http://localhost:8080/entries', {
+      headers: {
+        Accept: 'application/json'
+      },
+      method: 'GET'
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json()
+        } else {
+          throw new Error('error fetching db entries')
+        }
+      })
+      .then((data) => {
+        data.forEach((entry) =>
+          this.pageEntries.push({
+            id: entry.pageId,
+            title: entry.pageTitle,
+            link: entry.pageLink
+          })
+        )
+      })
+      .catch((err) => console.log(err))
   }
 }
 </script>
