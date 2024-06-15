@@ -15,8 +15,8 @@ func getEnv(envVar string) string {
 	return v
 }
 
-func GetDBURL() string {
-	return getEnv("DB_URL")
+func GetDSN() string {
+	return getEnv("DSN")
 }
 
 func GetAppRunMode() string {

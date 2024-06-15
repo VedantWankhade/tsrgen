@@ -2,13 +2,14 @@ GATEWAY_BINARY=gateway
 CONFLUENCE_BINARY=confluence
 JIRA_BINARY=jira
 STATS_BINARY=stats
+DB_BINARY=db
 
 up:
 	@echo "Starting Docker images..."
 	docker compose up -d
 	@echo "Docker images started!"
 
-up_build: build_gateway build_confluence build_jira build_stats
+up_build: build_gateway build_confluence build_jira build_stats build_db
 	@echo "Stopping docker images (if running...)"
 	docker compose down
 	@echo "Building (when required) and starting docker images..."
@@ -18,6 +19,11 @@ up_build: build_gateway build_confluence build_jira build_stats
 down:
 	@echo "Stopping docker compose..."
 	docker compose down
+	@echo "Done!"
+
+build_db:
+	@echo "Building db binary..."
+	cd ./db-service && env GOOS=linux CGO_ENABLED=0 go build -o ./bin/${DB_BINARY} ./cmd
 	@echo "Done!"
 
 build_gateway:

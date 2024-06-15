@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "github.com/vedantwankhade/tsrgen/db-service/service";
+
+message EntrySaveReq {
+    string pageId = 1;
+    string pageTitle = 2;
+    string pageLink = 3;
+}
+
+message EntrySaveRes {
+    string entryId = 1;
+}
+
+service DB {
+    rpc SaveEntry(EntrySaveReq) returns (EntrySaveRes) {}
+}

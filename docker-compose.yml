@@ -27,6 +27,15 @@ services:
       context: ./stats-service
     environment:
       MODE: "prod"
+  
+  db-service:
+    build:
+      context: ./db-service
+    ports:
+      - "8081:80"
+    environment:
+      MODE: "prod"
+      DSN: "postgres://postgres:password@postgres:5432/pages"
 
   postgres:
     image: 'postgres:14.2'

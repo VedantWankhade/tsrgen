@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	"github.com/vedantwankhade/tsrgen/db-service/internal/application/core/domain"
 	"github.com/vedantwankhade/tsrgen/db-service/internal/ports"
 )
@@ -11,8 +9,7 @@ type application struct {
 	db ports.DBPort
 }
 
-func (a *application) Save(page domain.Page) error {
-	fmt.Println(page)
+func (a *application) Save(page domain.Page) (int, error) {
 	return a.db.Save(page)
 }
 
