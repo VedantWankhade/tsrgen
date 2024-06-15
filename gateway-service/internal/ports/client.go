@@ -14,6 +14,9 @@ type StatsClientPort interface {
 	GetHTML([]*domain.Issue) (string, error)
 }
 
+type DBClientPort interface {
+	SaveEntry(domain.DBPageSaveReq) (int, error)
+}
 type JiraClientPort interface {
 	GetIssues(string, string, string, string) ([]*domain.Issue, error)
 }

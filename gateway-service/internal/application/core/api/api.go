@@ -11,10 +11,15 @@ type application struct {
 	confluenceClient ports.ConfluenceClientPort
 	jiraClient       ports.JiraClientPort
 	statsClient      ports.StatsClientPort
+	dbClient         ports.DBClientPort
 }
 
 func (a *application) GetHTML(issues []*domain.Issue) (string, error) {
 	return a.statsClient.GetHTML(issues)
+}
+
+func (a *application) SaveEntry(page domain.DBPageSaveReq) (int, error) {
+	return a.dbClient.SaveEntry(page)
 }
 
 func (a *application) CreatePage(content, title, parentId, spaceId, confluenceInstance, username, token string) (*domain.Page, error) {
@@ -45,6 +50,6 @@ func (a *application) Generate(atlassianInstance, atlassianUsername, atlassianTo
 	return fmt.Sprintf("https://%s/wiki/pages/viewinfo.action?pageId=%s", atlassianInstance, page.ID), nil
 }
 
-func NewApplication(confluenceClient ports.ConfluenceClientPort, jiraClient ports.JiraClientPort, statsClient ports.StatsClientPort) *application {
-	return &application{confluenceClient: confluenceClient, jiraClient: jiraClient, statsClient: statsClient}
+func NewApplication(confluenceClient ports.ConfluenceClientPort, jiraClient ports.JiraClientPort, statsClient ports.StatsClientPort, dbClient ports.DBClientPort) *application {
+	return &application{confluenceClient: confluenceClient, jiraClient: jiraClient, statsClient: statsClient, dbClient: dbClient}
 }

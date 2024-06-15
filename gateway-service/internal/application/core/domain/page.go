@@ -27,3 +27,9 @@ type PageCreateReq struct {
 	ConfluenceUsername string `json:"confluenceUsername"`
 	ConfluenceToken    string `json:"confluenceToken"`
 }
+
+type DBPageSaveReq struct {
+	Id    string `json:"id"`
+	Title string `json:"title"`
+	Link  string `json:"link"`
+}
