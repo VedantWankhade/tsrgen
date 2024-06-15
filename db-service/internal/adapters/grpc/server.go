@@ -21,6 +21,24 @@ type server struct {
 	service.UnimplementedDBServer
 }
 
+func (s *server) GetEntries(ctx context.Context, req *service.None) (*service.EntriesRes, error) {
+	// TODO)) input validation
+	entries, err := s.api.GetAll()
+	var entriesRes service.EntriesRes
+	if err != nil {
+		return nil, fmt.Errorf("creating entry in db failed: %w", err)
+	}
+	for _, entry := range entries {
+		entriesRes.Entries = append(entriesRes.Entries, &service.Entry{
+			EntryId:   int64(entry.EntryId),
+			PageId:    entry.PageId,
+			PageTitle: entry.PageTitle,
+			PageLink:  entry.PageLink,
+		})
+	}
+	return &entriesRes, nil
+}
+
 func (s *server) SaveEntry(ctx context.Context, req *service.EntrySaveReq) (*service.EntrySaveRes, error) {
 	// TODO)) input validation
 	pageReq := domain.Page{

@@ -13,13 +13,6 @@ type DBAdapter struct {
 	db *gorm.DB
 }
 
-type entry struct {
-	EntryId   int `gorm:"primaryKey"`
-	PageId    string
-	PageTitle string
-	PageLink  string
-}
-
 func openDB(dsn string) (*gorm.DB, error) {
 	tries := 5
 	var err error
@@ -49,17 +42,23 @@ func NewDBAdapter(dsn string) (*DBAdapter, error) {
 	}, nil
 }
 
-func (a *DBAdapter) save(entryItem entry) (int, error) {
+func (a *DBAdapter) save(entryItem domain.Entry) (int, error) {
 	tx := a.db.Create(&entryItem)
 	return entryItem.EntryId, tx.Error
 }
 
 func (a *DBAdapter) Save(page domain.Page) (int, error) {
-	a.db.AutoMigrate(&entry{})
-	item := entry{
+	a.db.AutoMigrate(&domain.Entry{})
+	item := domain.Entry{
 		PageId:    page.Id,
 		PageTitle: page.Title,
 		PageLink:  page.Link,
 	}
 	return a.save(item)
+}
+
+func (a *DBAdapter) GetAll() ([]*domain.Entry, error) {
+	var entries []*domain.Entry
+	tx := a.db.Find(&entries)
+	return entries, tx.Error
 }

@@ -16,6 +16,7 @@ type StatsClientPort interface {
 
 type DBClientPort interface {
 	SaveEntry(domain.DBPageSaveReq) (int, error)
+	GetEntries() ([]*domain.Entry, error)
 }
 type JiraClientPort interface {
 	GetIssues(string, string, string, string) ([]*domain.Issue, error)

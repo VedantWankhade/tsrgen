@@ -4,4 +4,5 @@ import "github.com/vedantwankhade/tsrgen/db-service/internal/application/core/do
 
 type DBPort interface {
 	Save(page domain.Page) (int, error)
+	GetAll() ([]*domain.Entry, error)
 }

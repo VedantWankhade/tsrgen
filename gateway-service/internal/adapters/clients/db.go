@@ -34,3 +34,20 @@ func (c *dbClient) SaveEntry(page domain.DBPageSaveReq) (int, error) {
 	}
 	return id, nil
 }
+
+func (c *dbClient) GetEntries() ([]*domain.Entry, error) {
+	entriesRes, err := c.Client.GetEntries(context.Background(), &db.None{})
+	if err != nil {
+		return nil, err
+	}
+	var entries []*domain.Entry
+	for _, entry := range entriesRes.Entries {
+		entries = append(entries, &domain.Entry{
+			EntryId:   int(entry.EntryId),
+			PageId:    entry.PageId,
+			PageTitle: entry.PageTitle,
+			PageLink:  entry.PageLink,
+		})
+	}
+	return entries, nil
+}

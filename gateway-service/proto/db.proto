@@ -12,6 +12,20 @@ message EntrySaveRes {
     string entryId = 1;
 }
 
+message Entry {
+    int64 entryId = 1;
+    string pageId = 2;
+    string pageLink = 3;
+    string pageTitle = 4;
+}
+
+message None{}
+
+message EntriesRes {
+    repeated Entry entries = 1;
+}
+
 service DB {
     rpc SaveEntry(EntrySaveReq) returns (EntrySaveRes) {}
+    rpc GetEntries(None) returns (EntriesRes) {}
 }

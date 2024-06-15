@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	DB_SaveEntry_FullMethodName = "/DB/SaveEntry"
+	DB_SaveEntry_FullMethodName  = "/DB/SaveEntry"
+	DB_GetEntries_FullMethodName = "/DB/GetEntries"
 )
 
 // DBClient is the client API for DB service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DBClient interface {
 	SaveEntry(ctx context.Context, in *EntrySaveReq, opts ...grpc.CallOption) (*EntrySaveRes, error)
+	GetEntries(ctx context.Context, in *None, opts ...grpc.CallOption) (*EntriesRes, error)
 }
 
 type dBClient struct {
@@ -46,11 +48,21 @@ func (c *dBClient) SaveEntry(ctx context.Context, in *EntrySaveReq, opts ...grpc
 	return out, nil
 }
 
+func (c *dBClient) GetEntries(ctx context.Context, in *None, opts ...grpc.CallOption) (*EntriesRes, error) {
+	out := new(EntriesRes)
+	err := c.cc.Invoke(ctx, DB_GetEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DBServer is the server API for DB service.
 // All implementations must embed UnimplementedDBServer
 // for forward compatibility
 type DBServer interface {
 	SaveEntry(context.Context, *EntrySaveReq) (*EntrySaveRes, error)
+	GetEntries(context.Context, *None) (*EntriesRes, error)
 	mustEmbedUnimplementedDBServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedDBServer struct {
 
 func (UnimplementedDBServer) SaveEntry(context.Context, *EntrySaveReq) (*EntrySaveRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveEntry not implemented")
+}
+func (UnimplementedDBServer) GetEntries(context.Context, *None) (*EntriesRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEntries not implemented")
 }
 func (UnimplementedDBServer) mustEmbedUnimplementedDBServer() {}
 
@@ -92,6 +107,24 @@ func _DB_SaveEntry_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DB_GetEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(None)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DBServer).GetEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DB_GetEntries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DBServer).GetEntries(ctx, req.(*None))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DB_ServiceDesc is the grpc.ServiceDesc for DB service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var DB_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SaveEntry",
 			Handler:    _DB_SaveEntry_Handler,
+		},
+		{
+			MethodName: "GetEntries",
+			Handler:    _DB_GetEntries_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

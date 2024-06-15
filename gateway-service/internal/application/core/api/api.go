@@ -23,6 +23,10 @@ func (a *application) SaveEntry(page domain.DBPageSaveReq) (int, error) {
 	return a.dbClient.SaveEntry(page)
 }
 
+func (a *application) GetEntries() ([]*domain.Entry, error) {
+	return a.dbClient.GetEntries()
+}
+
 func (a *application) CreatePage(content, title, parentId, spaceId, confluenceInstance, username, token string) (*domain.Page, error) {
 	return a.confluenceClient.CreatePage(content, title, parentId, spaceId, confluenceInstance, username, token)
 }

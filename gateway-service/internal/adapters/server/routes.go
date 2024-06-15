@@ -46,6 +46,23 @@ func (s *server) saveEntry(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *server) getEntries(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, fmt.Sprintf("Method %s not supported (allowed: GET)", r.Method), http.StatusMethodNotAllowed)
+		return
+	}
+	defer r.Body.Close()
+	entries, err := s.app.GetEntries()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("get entries request failed: %v", err), http.StatusInternalServerError)
+		return
+	}
+	err = json.NewEncoder(w).Encode(entries)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error encoding json: err: %v", err), http.StatusInternalServerError)
+	}
+}
+
 func (s *server) getHTML(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, fmt.Sprintf("Method %s not supported (allowed: POST)", r.Method), http.StatusMethodNotAllowed)
@@ -169,5 +186,6 @@ func (s *server) routes() *http.ServeMux {
 	mux.HandleFunc("/html", s.getHTML)
 	mux.HandleFunc("/generate", s.generate)
 	mux.HandleFunc("/save", s.saveEntry)
+	mux.HandleFunc("/entries", s.getEntries)
 	return mux
 }

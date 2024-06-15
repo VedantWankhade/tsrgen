@@ -5,3 +5,10 @@ type Page struct {
 	Title string `json:"tite"`
 	Link  string `json:"link"`
 }
+
+type Entry struct {
+	EntryId   int `gorm:"primaryKey"`
+	PageId    string
+	PageTitle string
+	PageLink  string
+}
