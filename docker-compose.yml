@@ -27,3 +27,14 @@ services:
       context: ./stats-service
     environment:
       MODE: "prod"
+
+  postgres:
+    image: 'postgres:14.2'
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pages
+    volumes:
+      - ./db-data/postgres/:/var/lib/postgresql/data
