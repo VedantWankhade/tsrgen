@@ -1,20 +1,14 @@
 <template>
   <header>
-    <nav>
-      <ul>
-        <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/generate">Generate</router-link></li>
-      </ul>
-    </nav>
+    <the-navbar></the-navbar>
   </header>
 </template>
 
 <script>
-import { RouterLink } from 'vue-router'
-
+import TheNavbar from './TheNavbar.vue'
 export default {
   components: {
-    RouterLink
+    TheNavbar
   }
 }
 </script>
